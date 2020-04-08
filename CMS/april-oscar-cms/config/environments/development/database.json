@@ -1,0 +1,17 @@
+{
+  "defaultConnection": "default",
+  "connections": {
+    "default": {
+      "connector": "bookshelf",
+      "settings": {
+        "client": "postgres",
+        "database": "april_oscar_database",
+        "host": "149.28.145.107",
+        "port": 5432,
+        "username": "postgres",
+        "password": "22121223"
+      },
+      "options": {}
+    }
+  }
+}

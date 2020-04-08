@@ -1,0 +1,2 @@
+rootProject.name='OscarAssistant'
+include ':app', ':aars', ':models'

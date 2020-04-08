@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#99000000"
+    android:clickable="true"
+    android:focusable="true"
+    android:keepScreenOn="true"
+    tools:context=".ui.main.MainActivity">
+
+    <ImageView
+        android:id="@+id/oscarIdle"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp" />
+
+    <TextView
+        android:id="@+id/oscarResponse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/oscarIdle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-60dp"
+        android:ellipsize="marquee"
+        android:fontFamily="sans-serif-thin"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:singleLine="true"
+        android:text="Hãy nói, 'Hey April'"
+        android:textColor="#FFF"
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:id="@+id/oscarBottomsheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_bottomsheet"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingTop="20dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="20dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/oscarListening"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/userMessage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:ellipsize="marquee"
+            android:fontFamily="sans-serif-thin"
+            android:gravity="center|start"
+            android:hint="Đang lắng nghe bạn nói..."
+            android:marqueeRepeatLimit="marquee_forever"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="10dp"
+            android:singleLine="true"
+            android:textColor="#353b48"
+            android:textSize="18sp" />
+    </LinearLayout>
+</RelativeLayout>
