@@ -2,6 +2,7 @@ package vn.vistark.oscarassistant.core.store
 
 class Constants {
     companion object {
-        val hotKey = "Hey April"
+        val wakeUpHotKey = "Hey Oscar"
+        val closeHotKey = "Bye Oscar"
     }
 }

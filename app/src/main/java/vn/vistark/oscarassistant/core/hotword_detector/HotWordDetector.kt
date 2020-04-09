@@ -1,6 +1,7 @@
 package vn.vistark.oscarassistant.core.hotword_detector
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
@@ -16,9 +17,10 @@ class HotWordDetector(private val context: Context, var hotword: String) :
     private val TAG = HotWordDetector::class.java.simpleName
 
     private val KWS_SEARCH = "wakeup"
+    private val MENU_SEARCH = "menu"
 
     var onFinised: ((Boolean) -> Unit)? = null
-    var onDetected: (() -> Unit)? = null
+    var onDetected: ((String) -> Unit)? = null
 
     private var recognizer: SpeechRecognizer? = null
     var activityReference: WeakReference<Context> = WeakReference(context)
@@ -80,36 +82,41 @@ class HotWordDetector(private val context: Context, var hotword: String) :
             KWS_SEARCH,
             hotword
         )
+
+        // Create grammar-based search for selection between demos
+        // Create grammar-based search for selection between demos
+        val menuGrammar = File(assetsDir, "menu.gram")
+        recognizer!!.addGrammarSearch(
+            MENU_SEARCH,
+            menuGrammar
+        )
     }
 
     fun waitHotword() {
         stopListen()
-        recognizer?.startListening(KWS_SEARCH)
+        recognizer?.startListening(MENU_SEARCH)
     }
 
     fun stopListen() {
         recognizer?.stop()
     }
 
+    @SuppressLint("DefaultLocale")
     override fun onResult(hypothesis: Hypothesis?) {
         if (hypothesis != null) {
             val text: String = hypothesis.hypstr
-            if (text == hotword) {
-                onDetected?.invoke()
-                stopListen()
-            }
+            println(text)
+            onDetected?.invoke(text)
         }
     }
 
+    @SuppressLint("DefaultLocale")
     override fun onPartialResult(hypothesis: Hypothesis?) {
         if (hypothesis == null) return
 
         val text: String = hypothesis.hypstr
-
-        if (text == hotword) {
-            onDetected?.invoke()
-            stopListen()
-        }
+        println("$text <><><><")
+        //onDetected?.invoke(text)
     }
 
     override fun onTimeout() {

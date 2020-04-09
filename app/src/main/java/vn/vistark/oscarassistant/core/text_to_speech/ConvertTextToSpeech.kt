@@ -8,7 +8,9 @@ import android.os.AsyncTask
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.speech.tts.Voice
 import android.util.Log
+import com.google.gson.GsonBuilder
 import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
@@ -17,58 +19,65 @@ import java.util.*
 class ConvertTextToSpeech(private val context: Context) {
     val TAG = ConvertTextToSpeech::class.java.simpleName
 
-    lateinit var audioManager: AudioManager
+    private var audioManager: AudioManager =
+        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private var previousStreamVolume = -1
     // Default TTS
     private var tts: TextToSpeech? = null
 
-    var onFinished: (() -> Unit)? = null
+    var onStart: (() -> Unit)? = null
+    var onFinished: ((Boolean) -> Unit)? = null
+    var startSpeechRecognizer: (() -> Unit)? = null
+    var isStartSpeechRecognizer = false
+    var isInitTtsSuccessfull = false
+    var isExitApplicationAfterTalk = false
 
     init {
-        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         previousStreamVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
     }
 
-    fun talk(msg: String, isStartSpeechRecognizer: Boolean = true) {
-        stop()
-        tts = TextToSpeech(context, TextToSpeech.OnInitListener {
-            if (it == TextToSpeech.SUCCESS) {
-                // Lệnh khi thành công
-                tts!!.language = Locale("vi")
-                tts!!.setPitch(1.23F)
-                tts!!.setSpeechRate(2F)
-                tts!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                    override fun onDone(utteranceId: String?) {
-                        //makeDefaultVolume()
-                        tts!!.shutdown()
-                        if (isStartSpeechRecognizer) {
-                            onFinished?.invoke()
+    fun initialize(msg: String) {
+        try {
+            tts = TextToSpeech(context, TextToSpeech.OnInitListener {
+                if (it == TextToSpeech.SUCCESS) {
+                    // Lệnh khi thành công
+                    tts!!.language = Locale("vi")
+                    tts!!.setPitch(1.23F)
+                    tts!!.setSpeechRate(2F)
+                    tts!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                        override fun onDone(utteranceId: String?) {
+                            makeDefaultVolume()
+                            onFinished?.invoke(isExitApplicationAfterTalk)
+                            if (isStartSpeechRecognizer) {
+                                startSpeechRecognizer?.invoke()
+                                isStartSpeechRecognizer = false
+                            }
                         }
-                    }
 
-                    override fun onError(utteranceId: String?) {
-                        //makeDefaultVolume()
-                    }
+                        override fun onError(utteranceId: String?) {
+                            makeDefaultVolume()
+                            onFinished?.invoke(isExitApplicationAfterTalk)
+                        }
 
-                    override fun onStart(utteranceId: String?) {
-                        //makeMaxVolume()
-                    }
-                })
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    //vi-vn-x-vif-local (Giọng nam Bắc - nói offline)
-                    //vi-vn-x-vid-network (Giọng nam Bắc - off)
-                    //vi-vn-x-vic-network (Giọng nữ Bắc - off)
-                    //vi-vn-x-vif-network (Giọng nam Nam - off)
-                    //vi-vn-x-vie-local (Giọng nữ Nam - off)
-                    //vi-vn-x-gft-local (Giọng nữ mặc định- offline - dớ tệ hại)
-                    //vi-vn-x-vic-local (Giọng nữ Bắc - offline - ngữ điệu - HAY)
-                    //vi-vn-x-vid-local (Giọng nam Nam - offline - khá dở)
-                    //vi-vn-x-vie-network (Giọng nữ Nam - offline - khá dở)
-                    //vi-vn-x-gft-network (Giọng nữ Nam - offline - dở)
-                    //vi-VN-language (Mặc định)
+                        override fun onStart(utteranceId: String?) {
+                            makeMaxVolume()
+                            onStart?.invoke()
+                        }
+                    })
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        //vi-vn-x-vif-local (Giọng nam Bắc - nói offline)
+                        //vi-vn-x-vid-network (Giọng nam Bắc - off)
+                        //vi-vn-x-vic-network (Giọng nữ Bắc - off)
+                        //vi-vn-x-vif-network (Giọng nam Nam - off)
+                        //vi-vn-x-vie-local (Giọng nữ Nam - off)
+                        //vi-vn-x-gft-local (Giọng nữ mặc định- offline - dớ tệ hại)
+                        //vi-vn-x-vic-local (Giọng nữ Bắc - offline - ngữ điệu - HAY)
+                        //vi-vn-x-vid-local (Giọng nam Nam - offline - khá dở)
+                        //vi-vn-x-vie-network (Giọng nữ Nam - offline - khá dở)
+                        //vi-vn-x-gft-network (Giọng nữ Nam - offline - dở)
+                        //vi-VN-language (Mặc định)
 
-                    val name = "vi-vn-x-vic-local"
-                    try {
+                        val name = "vi-vn-x-vic-local"
                         if (!tts!!.defaultVoice.name.contains(name)) {
                             for (v in tts!!.voices) {
                                 if (v.name.contains(name)) {
@@ -77,19 +86,43 @@ class ConvertTextToSpeech(private val context: Context) {
                                 }
                             }
                         }
-                    } catch (e: Exception) {
                     }
-                    tts!!.speak(
-                        msg,
-                        TextToSpeech.QUEUE_FLUSH,
-                        null,
-                        TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED
-                    )
+                    isInitTtsSuccessfull = true
+
+                    talk(msg, isStartSpeechRecognizer)
                 } else {
-                    tts!!.speak(msg, TextToSpeech.QUEUE_FLUSH, null)
+                    isInitTtsSuccessfull = false
                 }
+            })
+        } catch (e: Exception) {
+            isInitTtsSuccessfull = false
+            e.printStackTrace()
+        }
+    }
+
+    fun talk(msg: String, isStartSpeechRecognizer: Boolean = false) {
+        this.isStartSpeechRecognizer = isStartSpeechRecognizer
+        this.isExitApplicationAfterTalk = false
+        if (isInitTtsSuccessfull) {
+            stop()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                tts?.speak(
+                    msg,
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED
+                )
+            } else {
+                tts?.speak(msg, TextToSpeech.QUEUE_FLUSH, null)
             }
-        })
+        } else {
+            initialize(msg)
+        }
+    }
+
+    fun talkAndExit(msg: String) {
+        talk(msg, false)
+        this.isExitApplicationAfterTalk = true
     }
 
     fun makeMaxVolume() {
@@ -118,13 +151,20 @@ class ConvertTextToSpeech(private val context: Context) {
         }
     }
 
-    private fun isTalking(): Boolean {
-        return tts?.isSpeaking ?: false
-    }
+    val isTalking: Boolean
+        get() {
+            return tts != null && tts!!.isSpeaking
+        }
 
     fun stop() {
-        if (tts != null && tts!!.isSpeaking) {
+        if (isTalking) {
             tts!!.stop()
         }
+    }
+
+    fun shutdown() {
+        stop()
+        tts?.shutdown()
+        tts = null
     }
 }

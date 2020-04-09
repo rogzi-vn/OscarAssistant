@@ -59,6 +59,10 @@ class MainUiController(val context: MainActivity) {
         }
     }
 
+    fun updateOscarResponse(msg: String) {
+        context.oscarResponse.text = msg
+    }
+
     fun showBottomSheet() {
         context.oscarBottomsheet.visibility = View.VISIBLE
         val slide_up = AnimationUtils.loadAnimation(

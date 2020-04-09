@@ -11,6 +11,13 @@
     android:keepScreenOn="true"
     tools:context=".ui.main.MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:focusable="true" />
+
     <ImageView
         android:id="@+id/oscarIdle"
         android:layout_width="60dp"
@@ -43,6 +50,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_bottomsheet"
+        android:clickable="true"
+        android:focusable="true"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingTop="20dp"

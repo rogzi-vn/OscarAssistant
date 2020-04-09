@@ -14,7 +14,7 @@ class ConvertSpeechToText(private val context: Context) : RecognitionListener {
     var mSpeechRecognizerManager: SpeechRecognizer? = null
     private var mSpeechRecognizerIntent: Intent? = null
     private var language = "vi-VN"
-    private var timeout = 10000L
+    private var timeout = 3000L
     private var mIsListening = false
     private var mIsDoneSetupSpeechRecognizer = false
 
@@ -40,10 +40,10 @@ class ConvertSpeechToText(private val context: Context) : RecognitionListener {
                 mSpeechRecognizerIntent!!.run {
                     putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
+//                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, language)
                     putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-                    putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
+//                    putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
                     putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true) // For streaming result
                     putExtra(
                         RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
@@ -62,7 +62,6 @@ class ConvertSpeechToText(private val context: Context) : RecognitionListener {
             if (!mIsDoneSetupSpeechRecognizer) {
                 initSpeechRecognizerManger()
             }
-            onStart?.invoke()
             mSpeechRecognizerManager?.startListening(mSpeechRecognizerIntent)
         } else {
             Log.w(TAG, ">>>> ĐÃ NGHE TRƯỚC ĐÓ")
@@ -71,8 +70,8 @@ class ConvertSpeechToText(private val context: Context) : RecognitionListener {
 
     fun stopListen() {
         if (mSpeechRecognizerManager != null) {
+//            mSpeechRecognizerManager!!.cancel()
             mSpeechRecognizerManager!!.stopListening()
-            mSpeechRecognizerManager!!.cancel()
             mIsListening = false
         }
     }
@@ -89,6 +88,7 @@ class ConvertSpeechToText(private val context: Context) : RecognitionListener {
     }
 
     override fun onReadyForSpeech(params: Bundle?) {
+        onStart?.invoke()
     }
 
     override fun onRmsChanged(rmsdB: Float) {

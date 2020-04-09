@@ -1,15 +1,14 @@
 package vn.vistark.oscarassistant.ui.main
 
-import android.content.Context
 import kotlinx.android.synthetic.main.activity_main.*
 import vn.vistark.oscarassistant.core.speech_to_text.ConvertSpeechToText
-import java.util.*
 
 class SpeechToTextBinding {
     companion object {
         fun bind(context: MainActivity) {
             context.convertSpeechToText = ConvertSpeechToText(context)
             context.convertSpeechToText.onStart = {
+                context.stopAutoExitTimer()
                 context.convertTextToSpeech.stop()
                 context.userMessage.text = ""
                 context.mainUiController.hideOscarIdle()
@@ -26,19 +25,18 @@ class SpeechToTextBinding {
                 } else {
                     resultMsg = it
                     context.userMessage.text = it
-                    // Xử lý
+                    ProcessingTask(context, resultMsg).execute()
+//                    if (!Index.processing(context, resultMsg)) {
+//                        NoActionFound(context, resultMsg)
+//                    }
                 }
-                context.convertTextToSpeech.talk(resultMsg, false)
             }
             context.convertSpeechToText.onFinished = {
-                Timer().schedule(object : TimerTask() {
-                    override fun run() {
-                        context.runOnUiThread {
-                            context.mainUiController.hideBottomSheet()
-                            context.oscarServiceBinding.startHotwordDetector()
-                        }
-                    }
-                }, 500)
+                context.startAutoExitTimer()
+                context.runOnUiThread {
+                    context.mainUiController.hideBottomSheet()
+                    context.oscarServiceBinding.startHotwordDetector()
+                }
             }
         }
     }
