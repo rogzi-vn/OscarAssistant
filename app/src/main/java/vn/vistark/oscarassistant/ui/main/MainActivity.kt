@@ -13,7 +13,7 @@ import vn.vistark.oscarassistant.core.prefs.Prefs
 import vn.vistark.oscarassistant.core.services.OscarServices
 import vn.vistark.oscarassistant.core.services.ServiceCallbacks
 import vn.vistark.oscarassistant.core.speech_to_text.ConvertSpeechToText
-import vn.vistark.oscarassistant.core.store.Constants
+import vn.vistark.oscarassistant.core.Constants
 import vn.vistark.oscarassistant.core.text_to_speech.ConvertTextToSpeech
 import vn.vistark.oscarassistant.utils.ServicesUtils
 import java.util.*
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), ServiceCallbacks {
 
     companion object {
         var isActive = false
-        var AUTO_EXIT_AFTER = 30000L
+        var AUTO_EXIT_AFTER = 60000L
     }
 
     lateinit var mainUiController: MainUiController
@@ -71,14 +71,19 @@ class MainActivity : AppCompatActivity(), ServiceCallbacks {
         }
         convertTextToSpeech.onStart = {
             stopAutoExitTimer()
+            oscarServiceBinding.stopHotwordDetector()
         }
         convertTextToSpeech.onFinished = {
+            oscarServiceBinding.startHotwordDetector()
             if (it) {
                 stopAutoExitTimer()
-                finish()
             } else {
                 startAutoExitTimer()
             }
+        }
+        convertTextToSpeech.exitApp = {
+            stopAutoExitTimer()
+            finish()
         }
         ReplyHotwordTrigger(this)
     }

@@ -12,6 +12,7 @@ import android.speech.tts.Voice
 import android.util.Log
 import com.google.gson.GsonBuilder
 import org.json.JSONObject
+import vn.vistark.oscarassistant.core.services.OscarServices
 import java.lang.Exception
 import java.util.*
 
@@ -27,10 +28,14 @@ class ConvertTextToSpeech(private val context: Context) {
 
     var onStart: (() -> Unit)? = null
     var onFinished: ((Boolean) -> Unit)? = null
+    var exitApp: (() -> Unit)? = null
     var startSpeechRecognizer: (() -> Unit)? = null
     var isStartSpeechRecognizer = false
     var isInitTtsSuccessfull = false
     var isExitApplicationAfterTalk = false
+    var isPreventTimerAutoExit = false
+
+    var currentTalkingContent = ""
 
     init {
         previousStreamVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
@@ -47,7 +52,11 @@ class ConvertTextToSpeech(private val context: Context) {
                     tts!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                         override fun onDone(utteranceId: String?) {
                             makeDefaultVolume()
-                            onFinished?.invoke(isExitApplicationAfterTalk)
+                            currentTalkingContent = msg
+                            onFinished?.invoke(isPreventTimerAutoExit)
+                            if (isExitApplicationAfterTalk) {
+                                exitApp?.invoke()
+                            }
                             if (isStartSpeechRecognizer) {
                                 startSpeechRecognizer?.invoke()
                                 isStartSpeechRecognizer = false
@@ -56,7 +65,11 @@ class ConvertTextToSpeech(private val context: Context) {
 
                         override fun onError(utteranceId: String?) {
                             makeDefaultVolume()
-                            onFinished?.invoke(isExitApplicationAfterTalk)
+                            currentTalkingContent = msg
+                            if (isExitApplicationAfterTalk) {
+                                exitApp?.invoke()
+                            }
+                            onFinished?.invoke(isPreventTimerAutoExit)
                         }
 
                         override fun onStart(utteranceId: String?) {
@@ -77,16 +90,22 @@ class ConvertTextToSpeech(private val context: Context) {
                         //vi-vn-x-gft-network (Giọng nữ Nam - offline - dở)
                         //vi-VN-language (Mặc định)
 
-                        val name = "vi-vn-x-vic-local"
-                        if (!tts!!.defaultVoice.name.contains(name)) {
-                            for (v in tts!!.voices) {
-                                if (v.name.contains(name)) {
-                                    tts!!.voice = v
-                                    break
+                        if (OscarServices.oscarCurrentVoice == null) {
+                            val name = "vi-vn-x-vic-local"
+                            if (!tts!!.defaultVoice.name.contains(name)) {
+                                for (v in tts!!.voices) {
+                                    if (v.name.contains(name)) {
+                                        tts!!.voice = v
+                                        OscarServices.oscarCurrentVoice = v
+                                        break
+                                    }
                                 }
                             }
+                        } else {
+                            tts!!.voice = OscarServices.oscarCurrentVoice
                         }
                     }
+
                     isInitTtsSuccessfull = true
 
                     talk(msg, isStartSpeechRecognizer)
@@ -103,7 +122,10 @@ class ConvertTextToSpeech(private val context: Context) {
     fun talk(msg: String, isStartSpeechRecognizer: Boolean = false) {
         this.isStartSpeechRecognizer = isStartSpeechRecognizer
         this.isExitApplicationAfterTalk = false
+        this.isPreventTimerAutoExit = false
         if (isInitTtsSuccessfull) {
+            if (msg.isNotEmpty() && msg == currentTalkingContent)
+                return
             stop()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 tts?.speak(
@@ -118,6 +140,11 @@ class ConvertTextToSpeech(private val context: Context) {
         } else {
             initialize(msg)
         }
+    }
+
+    fun talkAndPreventTimer(msg: String) {
+        talk(msg, false)
+        this.isPreventTimerAutoExit = true
     }
 
     fun talkAndExit(msg: String) {

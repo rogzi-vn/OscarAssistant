@@ -11,6 +11,14 @@
     android:keepScreenOn="true"
     tools:context=".ui.main.MainActivity">
 
+    <FrameLayout
+        android:id="@+id/contentForShowing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/oscarIdle"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="60dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"

@@ -7,16 +7,21 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Binder
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
+import android.speech.tts.Voice
 import androidx.core.app.NotificationCompat
 import vn.vistark.oscarassistant.R
 import vn.vistark.oscarassistant.core.hotword_detector.HotWordDetector
-import vn.vistark.oscarassistant.core.store.Constants
+import vn.vistark.oscarassistant.core.Constants
 import vn.vistark.oscarassistant.ui.main.MainActivity
 
 
 class OscarServices : Service() {
+
+    companion object {
+        var oscarCurrentVoice: Voice? = null
+    }
+
     val TAG = OscarServices::class.java.simpleName
     val binder = LocalBinder()
     var serviceCallbacks: ServiceCallbacks? = null

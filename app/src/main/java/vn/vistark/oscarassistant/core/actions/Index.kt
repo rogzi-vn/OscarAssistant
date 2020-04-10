@@ -6,10 +6,10 @@ class Index {
     companion object {
         fun processing(context: MainActivity, msg: String): Boolean {
             return when {
-                UserActionMistake.check(context, msg) -> true
+                OpenApplication.check(context, msg) -> true
                 AskCurrentTime.check(context, msg) -> true
                 AskDefine.check(context, msg) -> true
-                else -> OpenApplication.check(context, msg)
+                else -> UserActionMistake.check(context, msg)
             }
         }
     }

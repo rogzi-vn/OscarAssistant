@@ -2,4 +2,4 @@
 
 grammar menu;
 
-public <item> = wakeup | hi oscar | hey oscar | hey os | hey | oscar | bye oscar | bye;
+public <item> = wakeup | hi oscar | hey oscar | hey os | hey | hey april | bye april | oscar | bye oscar | bye;

@@ -3,7 +3,6 @@ package vn.vistark.oscarassistant.core.api
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import vn.vistark.oscarassistant.core.store.Constants
 import java.util.concurrent.TimeUnit
 
 

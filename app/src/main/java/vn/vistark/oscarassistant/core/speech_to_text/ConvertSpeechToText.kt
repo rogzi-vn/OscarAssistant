@@ -3,6 +3,7 @@ package vn.vistark.oscarassistant.core.speech_to_text
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -22,6 +23,8 @@ class ConvertSpeechToText(private val context: Context) : RecognitionListener {
     var onResult: ((String?) -> Unit)? = null
     var onPartialResult: ((String) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
+
+    var lastedResultMillis = 0L
 
     init {
         initSpeechRecognizerManger()
@@ -136,7 +139,12 @@ class ConvertSpeechToText(private val context: Context) : RecognitionListener {
         if (results != null) {
             val resultArray =
                 results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!!
-            onResult?.invoke(resultArray[0])
+            if (System.currentTimeMillis() - lastedResultMillis < 1000) {
+                return
+            } else {
+                lastedResultMillis = System.currentTimeMillis()
+                onResult?.invoke(resultArray[0])
+            }
         }
     }
 }

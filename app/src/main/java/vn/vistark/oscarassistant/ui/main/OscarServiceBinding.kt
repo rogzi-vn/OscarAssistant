@@ -20,6 +20,10 @@ class OscarServiceBinding(val context: MainActivity) : ServiceConnection {
         oscarServices?.hotwordDetector?.waitHotword()
     }
 
+    fun stopHotwordDetector() {
+        oscarServices?.hotwordDetector?.stopListen()
+    }
+
     fun stop() {
         startHotwordDetector()
         if (bound) {

@@ -9,7 +9,7 @@ class ReplyUserActionMistake(val context: MainActivity) {
                 "Vâng ạ, vậy tôi xin phép ẩn đi",
                 "Vâng ạ, vậy tôi sẽ ẩn đi, nếu có gì hãy gọi tôi nha",
                 "Vâng ạ, không sao đâu ạ",
-                "Vâng ạ, khi nào cần gọi tôi lại nhé",
+                "Vâng ạ, khi nào cần hãy gọi tôi nhé",
                 "Vâng ạ, vậy tôi ẩn xuống đây ạ",
                 "Vâng ạ, tôi xin phép ẩn đi ngay",
                 "Vâng ạ, vậy hẹn gặp lại bạn ở lần khác"

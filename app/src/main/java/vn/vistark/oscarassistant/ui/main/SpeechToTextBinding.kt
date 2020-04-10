@@ -1,5 +1,7 @@
 package vn.vistark.oscarassistant.ui.main
 
+import android.util.Log
+import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 import vn.vistark.oscarassistant.core.speech_to_text.ConvertSpeechToText
 
@@ -9,6 +11,7 @@ class SpeechToTextBinding {
             context.convertSpeechToText = ConvertSpeechToText(context)
             context.convertSpeechToText.onStart = {
                 context.stopAutoExitTimer()
+                context.mainUiController.updateFrame(Fragment())
                 context.convertTextToSpeech.stop()
                 context.userMessage.text = ""
                 context.mainUiController.hideOscarIdle()
@@ -26,9 +29,6 @@ class SpeechToTextBinding {
                     resultMsg = it
                     context.userMessage.text = it
                     ProcessingTask(context, resultMsg).execute()
-//                    if (!Index.processing(context, resultMsg)) {
-//                        NoActionFound(context, resultMsg)
-//                    }
                 }
             }
             context.convertSpeechToText.onFinished = {

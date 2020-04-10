@@ -7,6 +7,8 @@ import android.os.SystemClock
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -57,6 +59,13 @@ class MainUiController(val context: MainActivity) {
                 }
             }, 500)
         }
+    }
+
+    fun updateFrame(frg: Fragment) {
+        val transaction = context.supportFragmentManager.beginTransaction()
+        transaction.replace(context.contentForShowing.id, frg)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     fun updateOscarResponse(msg: String) {
