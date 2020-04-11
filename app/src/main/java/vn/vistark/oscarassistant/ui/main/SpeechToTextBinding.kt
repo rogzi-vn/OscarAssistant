@@ -10,6 +10,7 @@ class SpeechToTextBinding {
         fun bind(context: MainActivity) {
             context.convertSpeechToText = ConvertSpeechToText(context)
             context.convertSpeechToText.onStart = {
+                context.oscarServiceBinding.stopHotwordDetector()
                 context.stopAutoExitTimer()
                 context.mainUiController.updateFrame(Fragment())
                 context.convertTextToSpeech.stop()
@@ -32,6 +33,7 @@ class SpeechToTextBinding {
                 }
             }
             context.convertSpeechToText.onFinished = {
+                context.oscarServiceBinding.startHotwordDetector()
                 context.startAutoExitTimer()
                 context.runOnUiThread {
                     context.mainUiController.hideBottomSheet()

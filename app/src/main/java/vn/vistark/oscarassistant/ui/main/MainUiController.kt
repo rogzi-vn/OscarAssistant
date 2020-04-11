@@ -65,7 +65,11 @@ class MainUiController(val context: MainActivity) {
         val transaction = context.supportFragmentManager.beginTransaction()
         transaction.replace(context.contentForShowing.id, frg)
         transaction.addToBackStack(null)
-        transaction.commit()
+        try {
+            transaction.commit()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun updateOscarResponse(msg: String) {

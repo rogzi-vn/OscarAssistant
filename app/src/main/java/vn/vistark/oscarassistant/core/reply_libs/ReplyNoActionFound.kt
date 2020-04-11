@@ -7,7 +7,7 @@ class ReplyNoActionFound(val context: MainActivity, var msg: String) {
         val response = arrayListOf(
             "Xin lỗi, tôi không hiểu",
             "Xin lỗi, tôi không hiểu lắm",
-            "Xin lỗi, tôi biết phải trả lời như thế nào",
+            "Xin lỗi, tôi không biết phải trả lời như thế nào",
             "Xin lỗi, vấn đề này tôi không biết",
             "Bạn thử nói lại giúp tôi với",
             "Bạn lặp lại chậm hơn được không",

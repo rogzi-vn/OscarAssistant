@@ -11,6 +11,9 @@ import vn.vistark.oscarassistant.ui.main.MainActivity
 
 class AskDefine {
     companion object {
+        @SuppressLint("DefaultLocale")
+        fun String.capitalizeWords(): String = split(" ").map { it.capitalize() }.joinToString(" ")
+
         val TAG = AskDefine::class.java.simpleName
 
         val regex = arrayListOf(
@@ -25,7 +28,8 @@ class AskDefine {
                         .replace("(((.*?)))$", "")
                         .replace("(((.*?)))", "|")
                         .replace("$", "")
-                    val objectName = msg.toLowerCase().replace(rplRgx.toRegex(), "").capitalize()
+                    val objectName =
+                        msg.toLowerCase().replace(rplRgx.toRegex(), "").capitalizeWords()
                     println("$objectName >>>>>>>>>>>>>>>>>>>>>>>>")
                     return getDefine(context, objectName)
                 }
@@ -42,7 +46,7 @@ class AskDefine {
 //                    Log.w(TAG, wdr.query.pages.entrySet().first().value.toString())
                     val nr = NumberResponse.extract(wdr.query.pages.entrySet().first().value)
                     if (nr.extract != null && nr.extract!!.isNotEmpty()) {
-                        val summaryStr = nr.extract!!.replace("\\((.*?)\\)".toRegex(), "")
+                        var summaryStr = nr.extract!!.replace("\\((.*?)\\)".toRegex(), "")
 
                         val objectName = nr.title
                         val dif = DefineInfoFragment()
@@ -51,11 +55,15 @@ class AskDefine {
                         bd.putString(DefineInfoFragment.OBJECT_NAME, objectName)
                         dif.arguments = bd
                         context.mainUiController.updateFrame(dif)
-                        val s = "^((.*?)\\.){1,2}".toRegex().find(
-                            summaryStr
-                        )!!.value
-                        Log.w(TAG, s)
-                        context.convertTextToSpeech.talkAndPreventTimer(s)
+                        try {
+                            summaryStr = "^((.*?)\\.(\\s|\$)){1,2}".toRegex().find(
+                                summaryStr
+                            )!!.value
+                        } catch (ez: Exception) {
+                            ez.printStackTrace()
+                        }
+                        Log.w(TAG, summaryStr)
+                        context.convertTextToSpeech.talkAndPreventTimer(summaryStr)
                         return true
                     }
                 }
