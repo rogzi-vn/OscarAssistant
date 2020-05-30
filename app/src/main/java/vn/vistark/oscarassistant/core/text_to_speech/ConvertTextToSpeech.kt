@@ -51,7 +51,7 @@ class ConvertTextToSpeech(private val context: Context) {
                     tts!!.setSpeechRate(2F)
                     tts!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                         override fun onDone(utteranceId: String?) {
-                            makeDefaultVolume()
+//                            makeDefaultVolume()
                             currentTalkingContent = msg
                             onFinished?.invoke(isPreventTimerAutoExit)
                             if (isExitApplicationAfterTalk) {
@@ -64,7 +64,7 @@ class ConvertTextToSpeech(private val context: Context) {
                         }
 
                         override fun onError(utteranceId: String?) {
-                            makeDefaultVolume()
+//                            makeDefaultVolume()
                             currentTalkingContent = msg
                             if (isExitApplicationAfterTalk) {
                                 exitApp?.invoke()
@@ -73,7 +73,7 @@ class ConvertTextToSpeech(private val context: Context) {
                         }
 
                         override fun onStart(utteranceId: String?) {
-                            makeMaxVolume()
+//                            makeMaxVolume()
                             onStart?.invoke()
                         }
                     })

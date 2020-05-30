@@ -30,7 +30,6 @@ class AskDefine {
                         .replace("$", "")
                     val objectName =
                         msg.toLowerCase().replace(rplRgx.toRegex(), "").capitalizeWords()
-                    println("$objectName >>>>>>>>>>>>>>>>>>>>>>>>")
                     return getDefine(context, objectName)
                 }
             }

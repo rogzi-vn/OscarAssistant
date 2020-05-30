@@ -1,12 +1,18 @@
 package vn.vistark.oscarassistant.ui.main
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.webkit.WebViewRenderProcess
+import android.webkit.WebViewRenderProcessClient
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
@@ -20,7 +26,7 @@ import java.util.*
 
 
 class MainUiController(val context: MainActivity) {
-    val defaultAnimationTime = 300L
+    private val defaultAnimationTime = 300L
 
     init {
         context.userMessage.isSelected = true
@@ -60,6 +66,7 @@ class MainUiController(val context: MainActivity) {
             }, 500)
         }
     }
+
 
     fun updateFrame(frg: Fragment) {
         val transaction = context.supportFragmentManager.beginTransaction()

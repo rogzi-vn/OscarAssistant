@@ -73,6 +73,7 @@ class HotWordDetector(private val context: Context, var hotword: String) :
         recognizer = SpeechRecognizerSetup.defaultSetup()
             .setAcousticModel(File(assetsDir, "en-us-ptm"))
             .setDictionary(File(assetsDir, "cmudict-en-us.dict"))
+            .setKeywordThreshold(1e-20f)
 //            .setRawLogDir(assetsDir)
             .recognizer
         recognizer!!.addListener(this)

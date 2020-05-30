@@ -11,6 +11,12 @@
     android:keepScreenOn="true"
     tools:context=".ui.main.MainActivity">
 
+    <WebView
+        android:id="@+id/wvForScrawl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
     <FrameLayout
         android:id="@+id/contentForShowing"
         android:layout_width="match_parent"
